@@ -47,36 +47,44 @@ class Cube(object):
 	edges = (0,1),(1,2),(2,3),(3,0),(4,5),(5,6),(6,7),(7,4),(0,4),(1,5),(2,6),(3,7)
 	faces = (0,1,2,3),(4,5,6,7),(0,1,5,4),(2,3,7,6),(0,3,7,4),(1,2,6,5)
 	colors = (0,255,255),(255,0,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0)
-	center = (0,0,0)
+	center = [(0,0,0)]
 
 	def __init__(self,pos=(0,0,0)):
 		x, y, z = pos
 		self.verts = [(x+X/2.0,y+Y/2.0,z+Z/2.0) for X,Y,Z in self.vertices]
+
+		self.cent = [(x+X/2.0,y+Y/2.0,z+Z/2.0) for X,Y,Z in self.center]
+		self.rad = 0
 
 	def update(self,key):
 
 		vert_list = []
 		vert_list += [list(vert) for vert in self.verts]
 
-		if key[pygame.K_LEFT]:
-			
+		if key[pygame.K_LEFT]:			
 			for vert in vert_list:
 				vert[0] -= 1
 
-		if key[pygame.K_RIGHT]:
-			
+		if key[pygame.K_RIGHT]:			
 			for vert in vert_list:
 				vert[0] += 1
 
-		if key[pygame.K_UP]:
-			
+		if key[pygame.K_UP]:			
 			for vert in vert_list:
 				vert[1] -= 1
 
-		if key[pygame.K_DOWN]:
-			
+		if key[pygame.K_DOWN]:			
 			for vert in vert_list:
 				vert[1] += 1
+
+
+		if key[pygame.K_m]:
+			self.rad += 1/500.0
+			print self.rad
+			for vert in vert_list:				
+
+				vert[0] = self.cent[0][0] + (vert[0]-self.cent[0][0])*math.cos(self.rad) - (vert[1]-self.cent[0][1])*math.sin(self.rad);
+				vert[1] = self.cent[0][1] + (vert[0]-self.cent[0][0])*math.sin(self.rad) + (vert[1]-self.cent[0][1])*math.cos(self.rad);
 
 		self.verts = []
 		self.verts += [tuple(vert) for vert in vert_list]
