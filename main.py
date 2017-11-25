@@ -41,15 +41,45 @@ class Cam(object):
 			self.pos[0]+=y
 			self.pos[2]-=x
 
+
 class Cube(object):
 	vertices = (-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)
 	edges = (0,1),(1,2),(2,3),(3,0),(4,5),(5,6),(6,7),(7,4),(0,4),(1,5),(2,6),(3,7)
 	faces = (0,1,2,3),(4,5,6,7),(0,1,5,4),(2,3,7,6),(0,3,7,4),(1,2,6,5)
 	colors = (0,255,255),(255,0,255),(255,0,0),(0,255,0),(0,0,255),(255,255,0)
+	center = (0,0,0)
 
 	def __init__(self,pos=(0,0,0)):
 		x, y, z = pos
 		self.verts = [(x+X/2.0,y+Y/2.0,z+Z/2.0) for X,Y,Z in self.vertices]
+
+	def update(self,key):
+
+		vert_list = []
+		vert_list += [list(vert) for vert in self.verts]
+
+		if key[pygame.K_LEFT]:
+			
+			for vert in vert_list:
+				vert[0] -= 1
+
+		if key[pygame.K_RIGHT]:
+			
+			for vert in vert_list:
+				vert[0] += 1
+
+		if key[pygame.K_UP]:
+			
+			for vert in vert_list:
+				vert[1] -= 1
+
+		if key[pygame.K_DOWN]:
+			
+			for vert in vert_list:
+				vert[1] += 1
+
+		self.verts = []
+		self.verts += [tuple(vert) for vert in vert_list]
 
 pygame.init()
 w, h = 800, 600
@@ -58,7 +88,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 fov = min(w,h)
 screen = pygame.display.set_mode((w,h))
 clock = pygame.time.Clock()
-FPS = 60
+FPS = 30
 
 cubes = [Cube((0,0,0)), Cube((2,0,0)), Cube((-2,0,0))]
 
@@ -96,6 +126,7 @@ while True:
 			y,z = rotate2d((y,z),cam.rot[0])
 			vert_list += [(x,y,z)]
 
+			#perspectiva
 			f = fov/float(z)
 			x, y = x*f, y*f
 			screen_coords+=[(cx+int(x), cy+int(y))]
@@ -130,3 +161,4 @@ while True:
 
 	key = pygame.key.get_pressed()
 	cam.update(key)
+	cubes[0].update(key)
